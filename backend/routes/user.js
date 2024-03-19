@@ -1,0 +1,146 @@
+const express = require("express");
+const {User,Account} = require("../db")
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET_KEY } = require("../config");
+const zod = require("zod");
+const authMiddleware = require("../middleware/authMiddleware");
+
+const router = express.Router();
+
+
+
+const SignupZod = zod.object({
+    username:zod.string().email(),
+    password:zod.string(),
+    firstName:zod.string(),
+    lastName:zod.string(),
+})
+
+router.post("/signup",async(req,res)=>{
+    const success = SignupZod.safeParse(req.body);
+    if(!success){
+        res.status(411).json({message : "Email already Exist!!! / Incorrect Inputs"});
+        return;
+    }
+    const username = req.body.username;
+    const isUser = await User.findOne({username:username});
+
+    if(isUser !== null){
+         res.status(411).json({message : "Email already Exist!!! / Incorrect Inputs"});
+         return;
+    }
+    const user = await User.create({
+        username:username,
+        password:req.body.password,
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
+    })
+    const account = await Account.create({
+        UserId:user._id,
+        balance:1 + Math.random() * 10000,
+    })
+    const userId = user._id;
+    const token = jwt.sign({
+        userId:userId
+    },JWT_SECRET_KEY);
+
+    res.status(200).json({
+        message:"User Created Sucessfully",
+        token:token,
+    })
+    return;
+})
+
+
+
+// Sign in route
+const SigninZod = zod.object({
+    username:zod.string().email(),
+    password:zod.string(),
+})
+router.post("/signin",async(req,res)=>{
+    const success = SigninZod.safeParse(req);
+    if(!success){
+        res.status(411).json({
+            message:"Error while Logging in",
+        })
+        return;
+    }
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const UserStat = await User.findOne({username:username,password:password});
+    if(UserStat){
+        const token = jwt.sign({
+            userId  : UserStat._id,
+        },JWT_SECRET_KEY)
+
+        res.status(200).json({
+            token:token,
+        })
+        return;
+    }
+    res.status(411).json({
+        message:"Error while Logging in",
+    })
+   return;
+})
+
+// update method
+
+router.put("/update",authMiddleware,async(req,res)=>{
+    const password = req.body.password;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+
+    try {
+        const user = await User.findByIdAndUpdate({_id:req.userId},{
+            password:password,
+            firstName:firstName,
+            lastName:lastName,
+        })
+        user.save();
+        res.status(200).json({
+            message:"Updated Successfully",
+        })
+        return;
+    } catch (error) {
+        res.json(411).json({
+            message:"Error while updating !!!",
+        })
+        return;
+    }
+    
+})
+
+router.get("/bulk",async(req,res)=>{
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+
+    try {
+        const user = await User.find({
+            $or: [
+                {
+                    firstName: firstName
+                },
+                {
+                    lastName: lastName
+                }
+            ]
+        }
+    );
+    res.status(200).json({users:user.map(user=>({
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        _id: user._id
+    }))});
+    return;
+    } catch (error) {
+        console.log(error);
+    }
+    
+    return;
+})
+
+module.exports = router;
