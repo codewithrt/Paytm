@@ -3,7 +3,6 @@ import UserComp from "./UserComp";
 
 
 const Dashboard = ()=>{
-    
     return(
         <>
            <div className="bg-white h-full">
