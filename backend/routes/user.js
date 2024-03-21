@@ -114,21 +114,28 @@ router.put("/update",authMiddleware,async(req,res)=>{
 })
 
 router.get("/bulk",async(req,res)=>{
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-
+    const firstName = req.query.firstName;
+    const lastName = req.query.lastName;
+    // console.log(req);
+    // console.log(firstName);
+    let user
     try {
-        const user = await User.find({
-            $or: [
-                {
-                    firstName: firstName
-                },
-                {
-                    lastName: lastName
-                }
-            ]
-        }
-    );
+        if(firstName !== "" || lastName !== ""){
+        user = await User.find({
+                $or: [
+                    {
+                        firstName: firstName
+                    },
+                    {
+                        lastName: lastName
+                    }
+                ]
+            
+        });
+    }else{
+        user = await User.find({
+    });
+    }
     res.status(200).json({users:user.map(user=>({
         username: user.username,
         firstName: user.firstName,
