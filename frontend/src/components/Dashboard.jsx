@@ -1,17 +1,17 @@
 import { lazy, useState ,Suspense} from "react";
-import UserComp from "./UserComp";
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from "recoil";
-import { InputUserAtom, UserSelector } from "../atoms/atom";
+import { InputUserAtom, IsLogAtom, TellAmount, UserSelector } from "../atoms/atom";
 import Test from "./Test";
 // const {InputUserAtom,UserSelector} = lazy(()=>import("../atoms/atom"))
 import InputComp from "./InputComp";
 import UserList from "./UserList";
+import NameComp from "../DashboardComp/NameComp";
+import YourBalance from "../DashboardComp/YourBalance";
+import LogOut from "../DashboardComp/LogOut";
 
 const Dashboard = ()=>{
-
-    
    
-    
+//    console.log("I am re rendering");
     return(
         <>
         {/* <Suspense fallback={<div>Loading ...</div>}> */}
@@ -21,16 +21,14 @@ const Dashboard = ()=>{
                     Payments App
                 </div>
                 <div className="justify-end  flex">
-                    <div className="p-2">Hello,User</div>
-                    <div className="p-2 bg-gray-200 rounded-full w-9 h-9 flex justify-center algin-center">
-                        <span>U</span>
-                    </div>
+                   <NameComp/>
                 </div>
              </div>
-             <div className="bg-white">
-                <div className="p-2 px-9 py-4 font-bold text-lg">
-                Your Balance  $5000
-                </div>
+             <div className="bg-white grid grid-cols-2 place-content-end">
+                <YourBalance/>
+                <LogOut/>
+             </div>
+             <div>
                 <div className="p-2 px-9 py-3 font-bold text-lg">
                 Users
                 </div>

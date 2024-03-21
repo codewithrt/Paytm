@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get("/balance",authMiddleware,async(req,res)=>{
     const userId = req.userId;
-    console.log(userId);
+    // console.log(userId);
     const account = await Account.findOne({
         UserId:userId
     })

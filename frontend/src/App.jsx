@@ -1,11 +1,14 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route ,Navigate} from "react-router-dom"
 import Signup from "./components/Signup"
 import Signin from "./components/Signin"
 import Dashboard from "./components/Dashboard"
 import { Suspense } from "react"
 import Test from "./components/Test"
+import { useRecoilValue } from "recoil"
+import { IsLogAtom } from "./atoms/atom"
 
 function App() {
+ const IsUser = useRecoilValue(IsLogAtom);
 
   return (
     <>
@@ -13,12 +16,12 @@ function App() {
       <BrowserRouter>
       {/* <Suspense fallback={<div>Loading ..</div>}> */}
         <Routes>
-          <Route path="/signup" element={<Signup/>}/>
-          <Route path="/signin" element={<Signin/>}/>
-          <Route path="/dashboard" element={<Dashboard/>}/>
-          {/* <Route path="send" element={<SendMoney/>}/> */}
+          <Route path="/" element={IsUser!== null?<Navigate to="/dashboard" />:<Navigate to="/signup" />} />
+          <Route path="/signup" element={IsUser!== null?<Navigate to="/dashboard" />:<Signup/>}/>
+          <Route path="/signin" element={IsUser!== null?<Navigate to="/dashboard" />:<Signin/>}/>
           
-          <Route path="/test" element={<Test/>}/>
+          <Route path="/dashboard" element={IsUser!== null?<Dashboard/>:<Navigate to="/signup" />}/>
+          {/* <Route path="send" element={<SendMoney/>}/> */}
           
         </Routes >
         {/* </Suspense> */}

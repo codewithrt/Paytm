@@ -1,13 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useSetRecoilState } from "recoil";
+import { IsLogAtom } from "../atoms/atom";
+import axios from "axios";
 
 
 
 const Signin = () => {
 
     const { register, handleSubmit } = useForm();
-    const onsubmit = (e) => {
+    const setUser = useSetRecoilState(IsLogAtom);
+    const onsubmit = async(e) => {
         console.log(e);
+        const token = await axios.post("http://localhost:3000/api/v1/user/signin",{params:{username:e.username,password:e.password}});
+        // console.log(token,typeof(token));
+        let Ourtoken = "Bearer " + token.data.token;
+        localStorage.setItem("token" ,("Bearer " + token.data.token));
+        const User = await axios.get("http://localhost:3000/api/v1/user/IsValidToken",{headers:{Authorization:Ourtoken}});
+        console.log(User);
+        setUser(User);
+        <Navigate to="/dashboard"/>
     }
     return (
         <>
@@ -28,7 +40,7 @@ const Signin = () => {
                                 </label>
                             </div>
                             <div className=" py-1">
-                                <input type="email" placeholder="jhondoe@example.com" className="p-2 w-full border border-slate-300 rounded-lg" required minLength="3" maxLength="30" {...register("email")} />
+                                <input type="email" placeholder="jhondoe@example.com" className="p-2 w-full border border-slate-300 rounded-lg" required minLength="3" maxLength="30" {...register("username")} />
                             </div>
                         </div>
                         <div className="py-2">
@@ -38,12 +50,12 @@ const Signin = () => {
                                 </label>
                             </div>
                             <div className=" py-1">
-                                <input placeholder="#password$" className="p-2 w-full border border-slate-300 rounded-lg" required minLength="6" {...register("password")} />
+                                <input type="password" placeholder="#password$" className="p-2 w-full border border-slate-300 rounded-lg" required minLength="6" {...register("password")} />
                             </div>
                         </div>
                         <div className="py-2">
                             <button className="text-center bg-black w-full text-white p-2 rounded-lg " type="submit">
-                                Sign Up
+                                Sign In
                             </button>
                         </div>
                         <div className="text-center py-1">

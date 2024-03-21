@@ -59,6 +59,7 @@ const SigninZod = zod.object({
     password:zod.string(),
 })
 router.post("/signin",async(req,res)=>{
+    // console.log(req);
     const success = SigninZod.safeParse(req);
     if(!success){
         res.status(411).json({
@@ -66,20 +67,21 @@ router.post("/signin",async(req,res)=>{
         })
         return;
     }
-    const username = req.body.username;
-    const password = req.body.password;
-
+    const username = req.body.params.username;
+    const password = req.body.params.password;
+    // console.log(username,password);
     const UserStat = await User.findOne({username:username,password:password});
     if(UserStat){
         const token = jwt.sign({
             userId  : UserStat._id,
         },JWT_SECRET_KEY)
-
+    //    console.log(token);
         res.status(200).json({
             token:token,
         })
         return;
     }
+    // console.log("I logged");
     res.status(411).json({
         message:"Error while Logging in",
     })
@@ -148,6 +150,23 @@ router.get("/bulk",async(req,res)=>{
     }
     
     return;
+})
+
+router.get("/IsValidToken",authMiddleware,async(req,res)=>{
+    try {
+        const user = await User.findById({_id:req.userId});
+        res.status(200).json({user:{
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            _id: user._id
+           }
+        })
+    } catch (error) {
+        res.status(403).json({message:"User not found"});
+    }
+    
+
 })
 
 module.exports = router;

@@ -1,16 +1,16 @@
 import {useRecoilValue} from "recoil"
 import {UserSelector} from "../atoms/atom";
-import UserComp from "./UserComp";
+import UserComp from "./Usercomponent";
 
 const UserList = ()=>{
     const Users = useRecoilValue(UserSelector);
     // console.log(Users);
-    const OurUsers = Users.users;
+    const OurUsers = Users;
     // console.log(OurUsers);
     return (
         <>
          {OurUsers.map((user)=>{
-                     return <UserComp key={user._id} firstName = {user.firstName} lastName = {user.lastName}/>
+                     return <UserComp key={user._id} user={user}/>
                  })}
         </>
     )
