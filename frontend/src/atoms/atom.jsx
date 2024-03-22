@@ -43,13 +43,17 @@ export const IsLogAtom = atom({
     })
 })
 // Amount Selector
-export const TellAmount = selector({
+export const TellAmount = atom({
     key:"TellAmount",
-    get:async({get})=>{
-        const token = localStorage.getItem("token");
-        const amount = await axios.get("http://localhost:3000/api/v1/account/balance",{headers:{Authorization:token}});
-        // console.log(amount);
-        return amount;
-    }
+    default:selector({
+        key:"TellAmountSelector",
+        get:async()=>{
+            const token = localStorage.getItem("token");
+            const amount = await axios.get("http://localhost:3000/api/v1/account/balance",{headers:{Authorization:token}});
+            // console.log(amount);
+            return amount;
+        }
+    })
+    
 })
 

@@ -20,13 +20,16 @@ router.get("/balance",authMiddleware,async(req,res)=>{
 })
 
 router.post("/transfer",authMiddleware,async(req,res)=>{
-    const to = req.body.to;
-    const amount = req.body.amount;
+    // console.log(req);
+    const to = req.body.params.to;
+    const amount = req.body.params.amount;
     const user  = req.userId;
     const userbalance = await Account.findOne({
         UserId:user
     })
+    // console.log(userbalance);
     if(!userbalance || userbalance.balance<amount){
+        // console.log("I logged 1");
         res.send(400).json({
             message:"Insufficient Balance"
         })
@@ -35,10 +38,13 @@ router.post("/transfer",authMiddleware,async(req,res)=>{
     const touser = await Account.findOne({
         UserId:to
     })
+    
     if(touser === null){
+        // console.log("I logged 2");
         res.status(400).json({
             message:"Invalid Account"
         })
+        return;
     }
 
     const session = await mongoose.startSession();

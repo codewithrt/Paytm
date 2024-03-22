@@ -21,7 +21,7 @@ const UserComp = ({user}) => {
                 </div>
             </div>
             <div >
-               {isOpen && <Modal setisOpen = {setisOpen}/>} 
+               {isOpen && <Modal setisOpen = {setisOpen} user={user}/>} 
             </div>
         </>
     )

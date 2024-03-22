@@ -10,16 +10,23 @@ const Signin = () => {
 
     const { register, handleSubmit } = useForm();
     const setUser = useSetRecoilState(IsLogAtom);
-    const onsubmit = async(e) => {
-        console.log(e);
-        const token = await axios.post("http://localhost:3000/api/v1/user/signin",{params:{username:e.username,password:e.password}});
+    const onsubmit = async (e) => {
+        // console.log(e);
+        try {
+            const token = await axios.post("http://localhost:3000/api/v1/user/signin", { params: { username: e.username, password: e.password } });
+            let Ourtoken = "Bearer " + token.data.token;
+            localStorage.setItem("token", ("Bearer " + token.data.token));
+            const User = await axios.get("http://localhost:3000/api/v1/user/IsValidToken", { headers: { Authorization: Ourtoken } });
+            // console.log(User);
+            setUser(User);
+            <Navigate to="/dashboard" />
+        } catch (error) {
+            // console.log(error.data);
+             alert(error.response.data.message)
+        }
+
         // console.log(token,typeof(token));
-        let Ourtoken = "Bearer " + token.data.token;
-        localStorage.setItem("token" ,("Bearer " + token.data.token));
-        const User = await axios.get("http://localhost:3000/api/v1/user/IsValidToken",{headers:{Authorization:Ourtoken}});
-        console.log(User);
-        setUser(User);
-        <Navigate to="/dashboard"/>
+
     }
     return (
         <>

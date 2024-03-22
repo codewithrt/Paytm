@@ -17,12 +17,13 @@ const SignupZod = zod.object({
 })
 
 router.post("/signup",async(req,res)=>{
-    const success = SignupZod.safeParse(req.body);
+    // console.log(req);
+    const success = SignupZod.safeParse(req.body.params);
     if(!success){
         res.status(411).json({message : "Email already Exist!!! / Incorrect Inputs"});
         return;
     }
-    const username = req.body.username;
+    const username = req.body.params.username;
     const isUser = await User.findOne({username:username});
 
     if(isUser !== null){
@@ -31,9 +32,9 @@ router.post("/signup",async(req,res)=>{
     }
     const user = await User.create({
         username:username,
-        password:req.body.password,
-        firstName:req.body.firstName,
-        lastName:req.body.lastName,
+        password:req.body.params.password,
+        firstName:req.body.params.firstName,
+        lastName:req.body.params.lastName,
     })
     const account = await Account.create({
         UserId:user._id,

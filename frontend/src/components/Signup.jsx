@@ -1,10 +1,27 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import axios from "axios"
+import { Navigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { IsLogAtom } from "../atoms/atom";
 
 const Signup = () => {
     const { register, handleSubmit } = useForm();
-    const onsubmit = (e) => {
-        console.log(e);
+    const setUser = useSetRecoilState(IsLogAtom);
+    const onsubmit = async(e) => {
+        // console.log(e);
+        try {
+            const token = await axios.post("http://localhost:3000/api/v1/user/signup", { params: { username: e.email, password: e.password,firstName:e.firstName,lastName:e.lastName } });
+            let Ourtoken = "Bearer " + token.data.token;
+            localStorage.setItem("token", ("Bearer " + token.data.token));
+            const User = await axios.get("http://localhost:3000/api/v1/user/IsValidToken", { headers: { Authorization: Ourtoken } });
+            // console.log(User);
+            setUser(User);
+            <Navigate to="/dashboard" />
+        } catch (error) {
+            // console.log(error.data);
+             alert(error.response.data.message)
+        }
     }
     return (
         <>
@@ -55,7 +72,7 @@ const Signup = () => {
                                 </label>
                             </div>
                             <div className=" py-1">
-                                <input placeholder="#password$" className="p-2 w-full border border-slate-300 rounded-lg" required minLength="6" {...register("password")} />
+                                <input type="password" placeholder="#password$" className="p-2 w-full border border-slate-300 rounded-lg" required minLength="6" {...register("password")} />
                             </div>
                         </div>
                         <div className="py-2">

@@ -1,8 +1,13 @@
-import { useRef } from "react";
+import axios from "axios";
+import { useRef, useState } from "react";
 import {useForm} from "react-hook-form"
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { TellAmount } from "../atoms/atom";
 
 
-const Modal = ({setisOpen}) => {
+const Modal = ({setisOpen,user}) => {
+    const UserBalance = useSetRecoilState(TellAmount);
+
      const modelref = useRef();
      const CloseModal = (e)=>{
         if(modelref.current === e.target){
@@ -11,8 +16,28 @@ const Modal = ({setisOpen}) => {
      }
 
      const {register,handleSubmit} = useForm();
-     const onsubmit = (e)=>{
+     const onsubmit = async(e)=>{
         console.log(e);
+        try {
+            const response = await axios.post("http://localhost:3000/api/v1/account/transfer",{params:{to:user._id,amount:e.amount}},{headers:{Authorization:localStorage.getItem("token")}})
+            alert(response.data.message);
+            setisOpen(false);
+            try {
+                const amount = await axios.get("http://localhost:3000/api/v1/account/balance",{headers:{Authorization:localStorage.getItem("token")}});
+                
+                UserBalance(amount);
+            } catch (error) {
+                
+                alert("Error While Fetching Balance");
+            }
+            
+            
+        } catch (error) {
+           
+            alert(error.response.data.message);
+            setisOpen(false);
+        }
+       
      }
 
     return (
@@ -23,11 +48,14 @@ const Modal = ({setisOpen}) => {
                         Send Money
                     </div>
                     <div className="flex text-gray-500  pt-10 text-center gap-4">
-                        <div className="bg-black w-11 rounded-full p-2 text-white ">
-                            R
+                        <div className="bg-black w-11 h-11 rounded-full p-2 text-white">
+                            {user.firstName.charAt(0).toUpperCase()}
                         </div>
                         <div className="py-2 text-black font-bold text-xl">
-                            Rahul Tembhurne
+                            <div>{user.firstName} {user.lastName}</div>
+                            <div className="text-gray-500 font-light text-sm">
+                            {user.username}
+                            </div>
                         </div>
                     </div>
                     <form onSubmit={handleSubmit(onsubmit)}>
@@ -49,6 +77,8 @@ const Modal = ({setisOpen}) => {
                         <div className="text-center py-1">
                             <button className="font-bold" onClick={()=>setisOpen(false)}>Cancel</button>
                         </div>
+                       
+                        
                     </form>
                 </div>
             </div>
