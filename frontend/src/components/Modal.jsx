@@ -2,10 +2,12 @@ import axios from "axios";
 import { useRef, useState } from "react";
 import {useForm} from "react-hook-form"
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { TellAmount } from "../atoms/atom";
+import { ModalState, TellAmount } from "../atoms/atom";
+import { toast } from "react-custom-alert";
 
 
-const Modal = ({setisOpen,user}) => {
+const Modal = ({user}) => {
+    const setisOpen = useSetRecoilState(ModalState(user._id));
     const UserBalance = useSetRecoilState(TellAmount);
 
      const modelref = useRef();
@@ -17,24 +19,28 @@ const Modal = ({setisOpen,user}) => {
 
      const {register,handleSubmit} = useForm();
      const onsubmit = async(e)=>{
-        console.log(e);
+
+        if(confirm("Want to Initiate This Transaction") === false){
+            return;
+        }
         try {
             const response = await axios.post("http://localhost:3000/api/v1/account/transfer",{params:{to:user._id,amount:e.amount}},{headers:{Authorization:localStorage.getItem("token")}})
-            alert(response.data.message);
+            toast.success(response.data.message)
             setisOpen(false);
             try {
                 const amount = await axios.get("http://localhost:3000/api/v1/account/balance",{headers:{Authorization:localStorage.getItem("token")}});
                 
                 UserBalance(amount);
             } catch (error) {
-                
-                alert("Error While Fetching Balance");
+                toast.error("Error While Fetching Balance")
+                // alert("Error While Fetching Balance");
             }
             
             
         } catch (error) {
            
-            alert(error.response.data.message);
+            // alert(error.response.data.message);
+            toast.error(error.response.data.message)
             setisOpen(false);
         }
        

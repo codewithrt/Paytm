@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 
 const NameComp = () =>{
     const User = useRecoilValue(IsLogAtom);
-    // console.log(User);
+  
     return(
         <>
          <div className="p-2">Hello, {User.data.user.firstName} {User.data.user.lastName}</div>

@@ -4,23 +4,25 @@ import axios from "axios"
 import { Navigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { IsLogAtom } from "../atoms/atom";
+import { toast } from "react-custom-alert";
 
 const Signup = () => {
     const { register, handleSubmit } = useForm();
     const setUser = useSetRecoilState(IsLogAtom);
     const onsubmit = async(e) => {
-        // console.log(e);
+   
         try {
             const token = await axios.post("http://localhost:3000/api/v1/user/signup", { params: { username: e.email, password: e.password,firstName:e.firstName,lastName:e.lastName } });
             let Ourtoken = "Bearer " + token.data.token;
             localStorage.setItem("token", ("Bearer " + token.data.token));
             const User = await axios.get("http://localhost:3000/api/v1/user/IsValidToken", { headers: { Authorization: Ourtoken } });
-            // console.log(User);
+      
             setUser(User);
             <Navigate to="/dashboard" />
         } catch (error) {
-            // console.log(error.data);
-             alert(error.response.data.message)
+     
+            toast.error(error.response.data.message)
+            //  alert(error.response.data.message)
         }
     }
     return (

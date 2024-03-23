@@ -6,7 +6,10 @@ const LogOut = ()=>{
     const Logged = useSetRecoilState(IsLogAtom);
     const navigate = useNavigate();
     const LogOutFunction = ()=>{
-        console.log("I am here");
+        const value = confirm("Are you sure You want to Log Out");
+        if(value === false){
+            return;
+        }
         localStorage.removeItem("token");
         Logged(null);
         navigate("/signup")

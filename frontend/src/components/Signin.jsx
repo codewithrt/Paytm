@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import { IsLogAtom } from "../atoms/atom";
 import axios from "axios";
+import { toast } from "react-custom-alert";
 
 
 
@@ -11,21 +12,22 @@ const Signin = () => {
     const { register, handleSubmit } = useForm();
     const setUser = useSetRecoilState(IsLogAtom);
     const onsubmit = async (e) => {
-        // console.log(e);
+
         try {
             const token = await axios.post("http://localhost:3000/api/v1/user/signin", { params: { username: e.username, password: e.password } });
             let Ourtoken = "Bearer " + token.data.token;
             localStorage.setItem("token", ("Bearer " + token.data.token));
             const User = await axios.get("http://localhost:3000/api/v1/user/IsValidToken", { headers: { Authorization: Ourtoken } });
-            // console.log(User);
+  
             setUser(User);
             <Navigate to="/dashboard" />
         } catch (error) {
-            // console.log(error.data);
-             alert(error.response.data.message)
+    
+            toast.error(error.response.data.message)
+            //  alert(error.response.data.message)
         }
 
-        // console.log(token,typeof(token));
+      
 
     }
     return (

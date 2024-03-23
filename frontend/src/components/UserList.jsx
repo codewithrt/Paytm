@@ -4,9 +4,9 @@ import UserComp from "./Usercomponent";
 
 const UserList = ()=>{
     const Users = useRecoilValue(UserSelector);
-    // console.log(Users);
+
     const OurUsers = Users;
-    // console.log(OurUsers);
+   
     return (
         <>
          {OurUsers.map((user)=>{

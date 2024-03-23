@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import Modal from "./Modal";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { ModalState } from "../atoms/atom";
 
 
 const UserComp = ({user}) => {
-    const [isOpen,setisOpen] = useState(false);
+    const [isOpen,setisOpen ]= useRecoilState(ModalState(user._id));
+    
     return (
         <>
             <div className="grid grid-cols-2 h-9 place-content-end py-6">
@@ -21,7 +24,7 @@ const UserComp = ({user}) => {
                 </div>
             </div>
             <div >
-               {isOpen && <Modal setisOpen = {setisOpen} user={user}/>} 
+               {isOpen && <Modal  user={user}/>} 
             </div>
         </>
     )

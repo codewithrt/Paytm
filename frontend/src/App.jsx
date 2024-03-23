@@ -2,8 +2,6 @@ import { BrowserRouter, Routes, Route ,Navigate} from "react-router-dom"
 import Signup from "./components/Signup"
 import Signin from "./components/Signin"
 import Dashboard from "./components/Dashboard"
-import { Suspense } from "react"
-import Test from "./components/Test"
 import { useRecoilValue } from "recoil"
 import { IsLogAtom } from "./atoms/atom"
 

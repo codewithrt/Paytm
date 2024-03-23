@@ -1,7 +1,7 @@
 import { lazy, useState ,Suspense} from "react";
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from "recoil";
 import { InputUserAtom, IsLogAtom, TellAmount, UserSelector } from "../atoms/atom";
-import Test from "./Test";
+// import Test from "./Test";
 // const {InputUserAtom,UserSelector} = lazy(()=>import("../atoms/atom"))
 import InputComp from "./InputComp";
 import UserList from "./UserList";
@@ -11,10 +11,10 @@ import LogOut from "../DashboardComp/LogOut";
 
 const Dashboard = ()=>{
    
-//    console.log("I am re rendering");
+
     return(
         <>
-        {/* <Suspense fallback={<div>Loading ...</div>}> */}
+
            <div className="bg-white h-full">
              <div className="grid grid-cols-2 gap-4 place-content-end px-8 bg-white py-2 border-b-2 border-gray-200">
                 <div className="p-2 font-bold text-xl">
@@ -40,12 +40,12 @@ const Dashboard = ()=>{
              <div className="p-2 px-9 py-8" >
              <Suspense fallback={<div>Loading ..</div>}>
                 <UserList/>
-                 {/* <Test/> */}
+                
                  </Suspense>
              </div>
              
            </div>
-           {/* </Suspense> */}
+
         </>
     )
 }
